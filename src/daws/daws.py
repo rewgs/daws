@@ -3,7 +3,7 @@ from types import NoneType
 from platform import system
 
 from .consts import DAWS
-from .errors import UnsupportedDaws
+from .errors import UnsupportedDaws, WrongOsBuddy
 
 class DawApp:
     """
@@ -40,15 +40,58 @@ class Daw:
     def __init__(self, name: str | NoneType = None):
         self.name = name
 
-    # TODO: 
+
+    @staticmethod
+    def __get_installed(daw: str | list[str] | NoneType = None) -> DawApp | list[DawApp] | NoneType:
+        default_path = self.__get_default_path()
+        try:
+            default_path.resolve(strict=True)
+        except FileNotFoundError as error:
+            raise error
+        else:
+            if daw is not None:
+                if isinstance(daw, list):
+                    # TODO:
+                    # for d in daw:
+                else:
+                    # TODO: adapt to be DAW-agnostic
+                    installations: list[CubaseApp] = []
+                    app_paths = [ file for file in get_default_path().iterdir() if file.is_dir() and daw in file.name ]
+                    for p in app_paths:
+                        extracted_number: list = [
+                            char for char in p.stem.split() if char.isdigit()
+                        ]
+                        version_number = int(extracted_number[0])
+                        app = CubaseApp(p, version_number)
+                        installations.append(app)
+                    return installations
+            # TODO: get all installations of all DAWs
+            else:
+                pass
+
+
+class Daws:
+    """
+    Base class for the package.
+    """
+    def __init__(self):
+        self.__ROOT: Path = Path(PurePath(Path.home().root))
+        self.__OS: str = system()
+        self.daws = [ daw for daw in DAWS if self.__check_if_daw_installed(daw.name) ]
+
+    def __check_if_daw_installed(self, daw: str) -> bool:
+        pass
+
     @staticmethod
     def __get_default_path() -> tuple[Path, str]:
         """
         Returns the default Path in which DAW apps will be installed, as well 
         as the operating system.
         """
-        system_root: Path = Path(PurePath(Path.home().root))
-        OS = system()
+
+        # NOTE: moved these to Daws class
+        # system_root: Path = Path(PurePath(Path.home().root))
+        # OS = system()
 
         if OS == "Darwin":
             return system_root.joinpath("Applications"), OS
@@ -73,36 +116,4 @@ class Daw:
         elif OS == "Windows":
             pass
         else:
-            class WrongOsBuddy(Exception):
-                """Raises a basic exception if running on the wrong system."""
-
             raise WrongOsBuddy(f"This app is not designed to run on {OS}!")
-
-    @staticmethod
-    def __get_installed(daw: str | list[str] | NoneType = None) -> DawApp | list[DawApp] | NoneType:
-        default_path = self.__get_default_path()
-        try:
-            default_path.resolve(strict=True)
-        except FileNotFoundError as error:
-            raise error
-        else:
-            if daw is not None:
-                if isinstance(daw, list):
-                    # TODO:
-                    # for d in daw:
-                else:
-                    # TODO: adapt to be DAW-agnostic
-                    installations: list[CubaseApp] = []
-                    app_paths = [ file for file in get_default_path().iterdir() if file.is_dir() and "Cubase" in file.name ]
-                    for p in app_paths:
-                        extracted_number: list = [
-                            char for char in p.stem.split() if char.isdigit()
-                        ]
-                        version_number = int(extracted_number[0])
-                        app = CubaseApp(p, version_number)
-                        installations.append(app)
-                    return installations
-            # TODO: get all installations of all DAWs
-            else:
-                pass
-
