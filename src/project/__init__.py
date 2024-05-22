@@ -4,8 +4,6 @@ import os
 
 from daws import Daw
 
-from .helpers import validate_selected_dir
-
 
 class SessionFile:
     """
@@ -62,6 +60,16 @@ class Project:
     The root of a scoring project, within which *all* assets would presumably be located -- not 
     just DAW sessions, but also picture, mixes, documents...anything.
     """
+
+    # TODO: replace me with better function (forget where it is, but it also takes PurePaths and strings)
+    @staticmethod
+    def validate_selected_dir(dir: Path) -> Path:
+        try:
+            dir.resolve(strict=True)
+        except FileNotFoundError as error:
+            raise error
+        finally:
+            return dir.resolve(strict=True)
 
     @staticmethod
     def convert_str_to_path(path: str) -> Path:

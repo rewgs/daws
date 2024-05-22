@@ -1,20 +1,25 @@
+# TODO: 
+# - Add ~/Library/Application Support/Steinberg folder! It seems to support *all* versions of Cubase, FYI.
+
+
 from pathlib import Path, PurePath
 from platform import system
 from types import NoneType
 from typing import NoReturn
 import psutil
 
-from daws import Daw, DawApp
-
+from daw import Daw, DawApp
 
 
 class CubaseApp(DawApp):
     """
     A single Cubase application installation (i.e. one for Cubase 12, another for Cubase 13, etc).
     """
-    def __init__(self, path, version):
-        self.path: Path = path
-        self.version: int = version
+    def __init__(self):
+        super().__init__()
+        # NOTE: moved this to DawApp class
+        # self.path: Path = path
+        # self.version: int = version
 
     # NOTE: moved this to DawApp class
     # def is_open(self) -> bool: 
@@ -26,6 +31,7 @@ class Cubase(Daw):
     Concerned with the abstract notion of Cubase -- the various application versions installed, whether any of said applications are open, etc.
     """
     def __init__(self):
+        super().__init__()
         self.apps: list[CubaseApp] = self.__get_installed_apps()
         self.latest: CubaseApp = self.__get_latest_version()
 
