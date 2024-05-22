@@ -11,6 +11,7 @@ Contains two submodules: `daw` and `project`:
         - name
         - developer
         - operatingSystems
+    <!-- NOTE: not worrying about `project` this yet -- I may want this to be its own module -->
     - project: The root of a scoring project, within which *all* assets would presumably be located -- not just DAW sessions, but also picture, mixes, documents...anything.
         - sessionCollection: A folder within a Project that contains one or more Sessions.
             - sessionFolder: A single folder when creating a cue. Contains DAW files (.rpp, .ptx, etc), probably an "Audio Files" folder, etc.
