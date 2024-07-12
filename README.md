@@ -1,4 +1,4 @@
-A library for working with all major DAWs and their files.
+Provides a common interface for working with all major DAWs and their files.
 
 Contains two submodules: `daw` and `project`:
 - `daw`: deals with the DAW applications -- paths, various versions, etc.
