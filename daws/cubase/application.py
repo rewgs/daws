@@ -8,7 +8,7 @@ from types import NoneType
 from typing import NoReturn
 import psutil
 
-from daw import Daw, DawApp
+from ..daw import Daw
 
 
 class CubaseApp(DawApp):

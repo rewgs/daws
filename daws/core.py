@@ -1,14 +1,13 @@
-from abc import ABC, abstractmethod
 from pathlib import Path, PurePath
-from types import NoneType
 from platform import system
+from typing import Optional
 
-from .consts import DAWS
-from .errors import UnsupportedDaws, WrongOsBuddy
-import daw
+from .daw import Daw
+from .consts import SUPPORTED_DAWS
+from .errors import UnsupportedSystem
 
 
-class Core(ABC):
+class Core:
     """
     Base class for the package.
     """
@@ -16,25 +15,38 @@ class Core(ABC):
     def __init__(self):
         self.__ROOT: Path = Path(PurePath(Path.home().root))
         self.__OS: str = system()
-        self.daws = [ daw for daw in DAWS if self.__check_if_daw_installed(daw.name) ]
-
-    def __check_if_daw_installed(self, daw: str) -> bool:
-        pass
+        self.daws = [daw for daw in SUPPORTED_DAWS if self.__is_installed(daw.name)]
 
     @staticmethod
-    def __get_default_path() -> tuple[Path, str]:
-        """Returns the default Path in which DAW apps will be installed, as well as the operating system."""
+    def __resolve(path: str | Path | PurePath) -> Path:
+        if isinstance(path, Path):
+            try:
+                path.resolve(strict=True)
+            except FileNotFoundError as error:
+                raise error
+            else:
+                return path.resolve(strict=True)
+        # TODO:
+        elif isinstance(path, PurePath):
+            pass
+        # TODO:
+        elif isinstance(path, str):
+            pass
+        # TODO:
+        else:
+            pass
 
-        # NOTE: moved these to Daws class
-        # system_root: Path = Path(PurePath(Path.home().root))
-        # OS = system()
-
-        if OS == "Darwin":
-            return system_root.joinpath("Applications"), OS
-        elif OS == "Linux":
+    def __get_default_path(self) -> Path:
+        """
+        Returns the default Path in which DAW apps will be installed, as well as the operating system.
+        """
+        system_root = Path(Path(__file__).root).resolve(strict=True)
+        if self.__OS == "Darwin":
+            return self.__resolve(system_root.joinpath("Applications"))
+        elif self.__OS == "Linux":
+            # TODO: Place NotWsl and is_wsl elsewhere?
             class NotWsl(Exception):
                 """Raises a basic exception if not running on WSL."""
-
             def is_wsl(path: Path) -> bool:
                 try:
                     path.resolve(strict=True)
@@ -42,48 +54,45 @@ class Core(ABC):
                     return False
                 else:
                     return True
-
             program_files = system_root.joinpath("mnt", "c", "Program Files")
             if not is_wsl(program_files):
                 raise NotWsl(f"Expected to find {program_files.as_posix()}, but didn't. Are you running this on WSL?")
-            return program_files
-
-        # TODO:
-        elif OS == "Windows":
-            pass
+            return self.__resolve(program_files)
+        elif self.__OS == "Windows":
+            return self.__resolve(system_root.joinpath("Program Files"))
         else:
-            raise WrongOsBuddy(f"This app is not designed to run on {OS}!")
+            raise UnsupportedSystem(f"This app is not designed to run on {self.__OS}!")
 
     # FIXME:
-    def __get_installed(self) -> DawApp | list[DawApp] | NoneType:
+    def __get_installed(self) -> Optional[list[Daw]]:
         """
-        Gets all instances of `daw`.
+        Gets all instances of `Daw`.
         """
         default_path = self.__get_default_path()
         try:
             default_path.resolve(strict=True)
         except FileNotFoundError as error:
             raise error
-        else:
-            if daw is not None:
-                if isinstance(daw, list):
-                    # TODO:
-                    # for d in daw:
-                else:
-                    # TODO: adapt to be DAW-agnostic
-                    installations: list[CubaseApp] = []
-                    app_paths = [ file for file in get_default_path().iterdir() if file.is_dir() and daw in file.name ]
-                    for p in app_paths:
-                        extracted_number: list = [
-                            char for char in p.stem.split() if char.isdigit()
-                        ]
-                        version_number = int(extracted_number[0])
-                        app = CubaseApp(p, version_number)
-                        installations.append(app)
-                    return installations
-            # TODO: get all installations of all DAWs
-            else:
-                pass
+        # else:
+        #     if daw is not None:
+        #         if isinstance(daw, list):
+        #         # TODO:
+        #         # for d in daw:
+        #         else:
+        #             # TODO: adapt to be DAW-agnostic
+        #             installations: list[CubaseApp] = []
+        #             app_paths = [file for file in self.__get_default_path().iterdir() if file.is_dir() and daw in file.name]
+        #             for p in app_paths:
+        #                 extracted_number: list = [
+        #                     char for char in p.stem.split() if char.isdigit()
+        #                 ]
+        #                 version_number = int(extracted_number[0])
+        #                 app = CubaseApp(p, version_number)
+        #                 installations.append(app)
+        #             return installations
+        #     # TODO: get all installations of all DAWs
+        #     else:
+        #         pass
 
     # TODO: make some `@abstractmethod`s. 
     # These not only provide an opportunity to force the subclass to have to 
@@ -93,3 +102,4 @@ class Core(ABC):
     # This is a great way to deal with functionality that is essential to all 
     # DAWs, but the execution of that functionality is DAW-specific.
     # ...or perhaps go with Protocol instead? See: https://www.youtube.com/watch?v=xvb5hGLoK0A
+
