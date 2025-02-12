@@ -7,4 +7,4 @@ import reaper
 
 from .core import Core
 
-__all__ = [ "Core" ]
+__all__ = ["Core"]
