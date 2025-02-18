@@ -3,7 +3,7 @@ package cubase_test
 import (
 	"testing"
 
-	"github.com/rewgs/daws/daws/cubase"
+	"github.com/rewgs/daws/cubase"
 )
 
 func TestCubaseNew(t *testing.T) {

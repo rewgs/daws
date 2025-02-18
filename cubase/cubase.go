@@ -12,7 +12,7 @@ import (
 
 	// "github.com/biter777/processex"
 
-	"github.com/rewgs/daws/daws"
+	"github.com/rewgs/daws"
 )
 
 var platforms = []string{
