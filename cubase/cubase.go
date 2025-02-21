@@ -11,6 +11,10 @@ import (
 	"strings"
 )
 
+const developer string = "Steinberg"
+
+const extension string = ".cpr"
+
 var platforms = []string{
 	"darwin",
 	"windows",
