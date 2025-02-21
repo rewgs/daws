@@ -9,10 +9,6 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-
-	// "github.com/biter777/processex"
-
-	"github.com/rewgs/daws"
 )
 
 var platforms = []string{
@@ -20,14 +16,10 @@ var platforms = []string{
 	"windows",
 }
 
-// type Cubase struct {
-// 	Name    string
-// 	Path    string
-// 	Version int
-// }
-
 type Cubase struct {
-	daws.Base
+	Name    string
+	Path    string
+	Version int
 }
 
 func getAll() (all []*Cubase) {
@@ -169,22 +161,4 @@ func (c *Cubase) DefaultPrefsPath() (path string) {
 // 		}
 // 	}
 // 	return ""
-// }
-
-// Checks if this particular Cubase installation is open.
-// old Python:
-// return True if len([proc for proc in psutil.process_iter(["pid", "name", "username"]) if f"Cubase {self.version}" in proc.name() and proc.is_running()]) > 0 else False
-// func (app Cubase) GetProcess() []*os.Process {
-// 	basename := filepath.Base(app.Path)
-// 	name := strings.ReplaceAll(basename, ".app", "")
-// 	process, _, err := processex.FindByName(name)
-// 	if err == processex.ErrNotFound {
-// 		fmt.Printf("Process %v not running", name)
-// 		os.Exit(0)
-// 	}
-// 	if err != nil {
-// 		fmt.Printf("Process %v find error: %v", name, err)
-// 		os.Exit(1)
-// 	}
-// 	return process
 // }

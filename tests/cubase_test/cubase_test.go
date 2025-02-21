@@ -9,7 +9,7 @@ import (
 func TestCubaseNew(t *testing.T) {
 	cubase := cubase.New()
 	want := "Cubase 14"
-	got := cubase.GetName()
+	got := cubase.Name
 	if want != got {
 		t.Errorf("Cubase.GetName(): Want: %s; Got: %s", want, got)
 	}
