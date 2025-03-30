@@ -1,8 +1,6 @@
 package daws
 
-// import "fmt"
-
 type DAW interface {
-	DefaultPreferencesPath() string
+	DefaultPreferencesPath() (path string)
 	IsOpen() bool
 }

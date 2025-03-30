@@ -9,11 +9,14 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+
+	"github.com/rewgs/daws/session"
 )
 
-const developer string = "Steinberg"
-
-const extension string = ".cpr"
+const (
+	developer string = "Steinberg"
+	extension string = ".cpr"
+)
 
 var platforms = []string{
 	"darwin",
@@ -44,7 +47,6 @@ func getAll() (all []*Cubase) {
 				}
 				return nil
 			})
-
 			if err != nil {
 				fmt.Printf("Error walking the path %q: %v\n", dir, err)
 			}
@@ -138,12 +140,14 @@ func NewOfVersion(version int) *Cubase {
 
 // TODO:
 // I beieve newer versions also store Preferences in ~/Documents. Account for that.
-func (c *Cubase) DefaultPrefsPath() (path string) {
+func (c *Cubase) DefaultPreferencesPath() (path string) {
 	switch _os := runtime.GOOS; _os {
 	case "darwin":
 		path = fmt.Sprintf("/Library/Preferences/%s", c.Name)
 	case "linux":
-		// TODO: WSL only!
+		// TODO:
+		// - WSL
+		// - Wine
 	case "windows":
 		home, err := os.UserHomeDir()
 		if err != nil {
@@ -154,6 +158,18 @@ func (c *Cubase) DefaultPrefsPath() (path string) {
 		log.Fatalf("%s not supported!", _os)
 	}
 	return
+}
+
+// TODO:
+func (c *Cubase) IsOpen() bool {
+	// ...
+	return true
+}
+
+func (c *Cubase) NewSession(path string) *session.Session {
+	s := session.New(c, path)
+	// s.Create() // TODO:
+	return s
 }
 
 // YNGNI?
