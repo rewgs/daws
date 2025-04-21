@@ -6,8 +6,8 @@ from pathlib import (
     Path,
     # PurePath
 )
-import psutil
 
+import psutil
 
 # from types import NoneType
 # from platform import system
@@ -18,8 +18,8 @@ import psutil
 
 class Daw(ABC):
     """
-    Abstract Base Class for a single instance of a DAW application, e.g. one 
-    for Cubase 12, another for Cubase 13, another for Pro Tools 11, another for 
+    Abstract Base Class for a single instance of a DAW application, e.g. one
+    for Cubase 12, another for Cubase 13, another for Pro Tools 11, another for
     Pro Tools 12, etc...
     """
 
@@ -29,13 +29,22 @@ class Daw(ABC):
         self.version = version
 
     def is_open(self) -> bool:
-        """
-        """
-        return True if len([proc for proc in psutil.process_iter(["pid", "name", "username"]) if
-                            f"{self.name} {self.version}" in proc.name() and proc.is_running()]) > 0 else False
+        """ """
+        return (
+            True
+            if len(
+                [
+                    proc
+                    for proc in psutil.process_iter(["pid", "name", "username"])
+                    if f"{self.name} {self.version}" in proc.name()
+                    and proc.is_running()
+                ]
+            )
+            > 0
+            else False
+        )
 
     # TODO:
     def __is_installed(self, daw: str) -> bool:
-        """
-        """
+        """ """
         pass
